@@ -14,5 +14,5 @@
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
-private/bower_components/
-private/node_modules/
+private/bower_components/*
+private/node_modules/*
