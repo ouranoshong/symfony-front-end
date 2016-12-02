@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-cmn-Hans" class="han-init">
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
 
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-
-
         <style>
             body {
                 background: #eee url("{{ asset('bundles/app/images/darkgrain.png') }}");
@@ -14,6 +12,12 @@
         </style>
 
         {% block stylesheets %}{% endblock %}
+
+        <style>
+            body {
+                font-family:Georgia,"Times New Roman", Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif !important;
+            }
+        </style>
     </head>
     <body>
         {% block body %}{% endblock %}

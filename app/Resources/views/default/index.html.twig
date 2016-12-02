@@ -269,6 +269,7 @@
 {% block stylesheets %}
 
     {% stylesheets
+
         'bundles/app/css/bootstrap.min.css'
         'bundles/app/css/main.css'
         filter="cssrewrite"
@@ -280,10 +281,10 @@
 
 {% block javascripts %}
 
-
     {% javascripts
         'bundles/app/js/jquery.min.js'
         'bundles/app/js/bootstrap.min.js'
+
     %}
         <script src="{{ asset_url }}" type="text/javascript"></script>
     {% endjavascripts %}

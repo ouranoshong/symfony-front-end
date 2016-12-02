@@ -13,6 +13,7 @@
   ],
   "devDependencies": {
     "jquery": "^3.1.1",
-    "bootstrap": "^3.3.7"
+    "bootstrap": "^3.3.7",
+    "Han": "^3.3.0"
   }
 }

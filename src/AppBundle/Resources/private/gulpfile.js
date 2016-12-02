@@ -61,3 +61,20 @@ gulp.task('images', function() {
     gulp.src('images/**/*')
         .pipe(gulp.dest('../public/images'));
 });
+
+gulp.task('han-css', function() {
+   gulp.src('bower_components/Han/dist/han.min.css')
+       .pipe(gulp.dest('../public/han'));
+});
+
+gulp.task('han-js', function() {
+    gulp.src('bower_components/Han/dist/han.min.js')
+        .pipe(gulp.dest('../public/han'));
+})
+
+gulp.task('han-font', function() {
+    gulp.src('bower_components/Han/dist/font/*')
+        .pipe(gulp.dest('../public/han/font'));
+});
+
+gulp.task('han', ['han-js', 'han-css', 'han-font']);
