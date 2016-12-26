@@ -17,6 +17,10 @@ security:
                     admin:
                         password: $2y$12$XTx4D81Ca3WHxK0Jznsa.OYuYsUbRJnnVrsbiEecSIGTUTlNh3PL2
                         roles: 'ROLE_ADMIN'
+        api_provider:
+            entity:
+                class: AppBundle:ApiUser
+                property: apiKey
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
@@ -40,6 +44,10 @@ security:
             logout:
                 path:   /logout
                 target: /
+
+            guard:
+                authenticators:
+                    - app.api_token_authenticator
 
     access_control:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
