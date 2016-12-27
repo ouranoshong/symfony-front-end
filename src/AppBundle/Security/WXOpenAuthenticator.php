@@ -13,8 +13,6 @@ use AppBundle\ResourceOwner\WXOpenClient;
 use AppBundle\Security\Exception\NoAuthCodeAuthenticationException;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -56,14 +54,12 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
             return;
         }
 
-        var_dump($this->client);exit;
-
         return $this->fetchAccessToken($request);
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-
+        $this->client->fetchUserInfo();
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -87,13 +83,21 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
     }
 
     private function fetchAccessToken(Request $request) {
+
         if (($code = $request->query->get('code'))) {
 
-            return $this->client->fetchAccessToken($code);
+            if (($data = $this->client->fetchAccessToken($code)) && ($data = json_decode($data))) {
+
+
+            }
 
         }
 
         throw new NoAuthCodeAuthenticationException();
 
+    }
+
+    private function fetchUserInfo($openId, $accessToken) {
+        $data = json_decode($this->client->fetchUserInfo($openId, $accessToken));
     }
 }

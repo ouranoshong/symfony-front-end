@@ -12,7 +12,7 @@ services:
 
     app.resource_owner.wxopen_client:
         class: AppBundle\ResourceOwner\WXOpenClient
-        arguments: ['%wx_open_app_id%', '%wx_open_app_secret%', 'wx_open_callback']
+        autowire: true
 
     app.security.wxopen_authenticator:
         class: AppBundle\Security\WXOpenAuthenticator

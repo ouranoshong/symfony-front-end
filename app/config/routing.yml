@@ -5,5 +5,5 @@ app:
 logout:
     path: /logout
 
-wx_open_callback:
+login_callback_wxopen:
     path: /login/callback/wxopen

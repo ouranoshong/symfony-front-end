@@ -8,6 +8,10 @@
 
 namespace AppBundle\ResourceOwner;
 
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Router;
+
 
 /**
  * Class WXOpenClient
@@ -30,19 +34,29 @@ class WXOpenClient
      */
     public $callbackUri = '';
 
+    private $callbackRoute;
+
+    private $generator;
+
     /**
      * WXOpenClient constructor.
      *
-     * @param $appId
-     * @param $appSecret
-     * @param $callbackUri
      *
      */
-    public function __construct($appId, $appSecret, $callbackUri) {
+    public function __construct(Container $container, Router $generator) {
 
-        $this->appId = $appId;
-        $this->appSecret = $appSecret;
-        $this->callbackUri = $callbackUri;
+        $configs = $container->getParameter('wx_open');
+
+        $this->appId = $configs['app_id'];
+        $this->appSecret = $configs['app_secret'];
+
+        $this->callbackUri = $generator->generate(
+
+            $configs['redirect_route'],
+            [],
+            UrlGeneratorInterface::ABSOLUTE_URL
+
+        );
 
     }
 
@@ -95,15 +109,17 @@ class WXOpenClient
      */
     public function generateAuthorizeUrl($state = null) {
 
+        $callback = '';
+
         if ($this->callbackUri) {
-            $this->callbackUri = \urlencode($this->callbackUri);
+            $callback = urlencode($this->callbackUri);
         }
 
-        if ($state = null) {
+        if ($state === null) {
             $state = md5(date('Y-m-d: H:i:s'));
         }
 
-        return "https://open.weixin.qq.com/connect/oauth2/authorize?appid={$this->appId}&redirect_uri={$this->callbackUri}&response_type=code&scope=snsapi_userinfo&state={$state}#wechat_redirect";
+        return "https://open.weixin.qq.com/connect/oauth2/authorize?appid={$this->appId}&redirect_uri={$callback}&response_type=code&scope=snsapi_userinfo&state={$state}#wechat_redirect";
     }
 
 
@@ -128,22 +144,22 @@ class WXOpenClient
 
     /**
      * @param $openId
-     * @param $access_token
+     * @param $accessToken
      *
      * @return string
      */
-    public function generateUserInfoUrl($openId, $access_token) {
-        return "https://api.weixin.qq.com/sns/userinfo?access_token={$access_token}&openid={$openId}&lang=zh_CN";
+    public function generateUserInfoUrl($openId, $accessToken) {
+        return "https://api.weixin.qq.com/sns/userinfo?access_token={$accessToken}&openid={$openId}&lang=zh_CN";
     }
 
     /**
      * @param $openId
-     * @param $access_token
+     * @param $accessToken
      *
      * @return mixed
      */
-    public function fetchUserInfo($openId, $access_token) {
-        return $this->request($this->generateUserInfoUrl($openId, $access_token));
+    public function fetchUserInfo($openId, $accessToken) {
+        return $this->request($this->generateUserInfoUrl($openId, $accessToken));
     }
 
     /**

@@ -8,6 +8,11 @@ imports:
 parameters:
     locale: en
 
+    wx_open:
+        app_id: "%wx_open_app_id%"
+        app_secret: "%wx_open_app_secret%"
+        redirect_route: login_callback_wxopen
+
 framework:
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }
