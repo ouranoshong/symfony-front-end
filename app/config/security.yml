@@ -38,8 +38,8 @@ security:
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
 
             form_login:
-              login_path: login
-              check_path: login
+                login_path: login
+                check_path: login
 
             logout:
                 path:   /logout
@@ -47,7 +47,7 @@ security:
 
             guard:
                 authenticators:
-                    - app.api_token_authenticator
+                    - app.security.wxopen_authenticator
 
     access_control:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }

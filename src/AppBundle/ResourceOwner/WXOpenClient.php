@@ -9,8 +9,6 @@
 namespace AppBundle\ResourceOwner;
 
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 /**
  * Class WXOpenClient
  *
@@ -41,14 +39,11 @@ class WXOpenClient
      *
      */
     public function __construct($appId, $appSecret, $callbackUri) {
+
         $this->appId = $appId;
         $this->appSecret = $appSecret;
+        $this->callbackUri = $callbackUri;
 
-        $this->callbackUri = $this->container->get('router')->generate(
-            $callbackUri,
-            [],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
     }
 
     /**

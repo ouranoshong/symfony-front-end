@@ -82,6 +82,4 @@ class ApiTokenAuthenticator extends AbstractGuardAuthenticator
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
-
-
 }

@@ -9,6 +9,9 @@
 namespace AppBundle\Security;
 
 
+use AppBundle\ResourceOwner\WXOpenClient;
+use AppBundle\Security\Exception\NoAuthCodeAuthenticationException;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,12 +21,32 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
+/**
+ * Class WXOpenAuthenticator
+ *
+ * @package AppBundle\Security
+ */
 class WXOpenAuthenticator extends AbstractGuardAuthenticator
 {
+    /**
+     * @var WXOpenClient
+     */
+    private $client;
+
+    /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $em;
+
+    public function __construct(WXOpenClient $client, EntityManager $em)
+    {
+        $this->client = $client;
+        $this->em = $em;
+    }
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        // TODO: Implement start() method.
+
     }
 
     public function getCredentials(Request $request)
@@ -33,32 +56,44 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
             return;
         }
 
+        var_dump($this->client);exit;
 
-        var_dump($request->getPathInfo());exit;
+        return $this->fetchAccessToken($request);
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        // TODO: Implement getUser() method.
+
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        // TODO: Implement checkCredentials() method.
+        return true;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        // TODO: Implement onAuthenticationFailure() method.
+        return null;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // TODO: Implement onAuthenticationSuccess() method.
+        return null;
     }
 
     public function supportsRememberMe()
     {
-        // TODO: Implement supportsRememberMe() method.
+        return true;
+    }
+
+    private function fetchAccessToken(Request $request) {
+        if (($code = $request->query->get('code'))) {
+
+            return $this->client->fetchAccessToken($code);
+
+        }
+
+        throw new NoAuthCodeAuthenticationException();
+
     }
 }
