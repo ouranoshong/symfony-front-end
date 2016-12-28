@@ -9,10 +9,15 @@
 namespace AppBundle\Security;
 
 
+use AppBundle\Entity\ApiUser;
 use AppBundle\ResourceOwner\WXOpenClient;
 use AppBundle\Security\Exception\NoAuthCodeAuthenticationException;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Router;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -36,10 +41,13 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
      */
     private $em;
 
-    public function __construct(WXOpenClient $client, EntityManager $em)
+    private $router;
+
+    public function __construct(WXOpenClient $client, EntityManager $em, Router $router)
     {
         $this->client = $client;
         $this->em = $em;
+        $this->router = $router;
     }
 
     public function start(Request $request, AuthenticationException $authException = null)
@@ -59,7 +67,26 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $this->client->fetchUserInfo();
+
+        $existingUser = $userProvider->loadUserByUsername($credentials->openid);
+
+        if ($existingUser) {
+            return $existingUser;
+        }
+
+        $userInfo = $this->fetchUserInfo($credentials->openid, $credentials->access_token);
+
+        $user = new ApiUser();
+
+        $user->setUserId(2);
+        $user->setUsername($userInfo->nickname);
+        $user->setApiKey($userInfo->openid);
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $user;
+
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -69,12 +96,12 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        return null;
+        return new Response($exception->getMessageKey());
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return null;
+        return new RedirectResponse($this->router->generate('homepage'));
     }
 
     public function supportsRememberMe()
@@ -86,9 +113,13 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
 
         if (($code = $request->query->get('code'))) {
 
-            if (($data = $this->client->fetchAccessToken($code)) && ($data = json_decode($data))) {
+            if (($tokenMessage = $this->client->fetchAccessToken($code)) && ($tokenMessage = json_decode($tokenMessage))) {
 
+                if (isset($tokenMessage->errorcode) && isset($tokenMessage->errmsg) && $tokenMessage->errorcode && $tokenMessage->errmsg) {
+                    throw new AuthenticationException($tokenMessage->errmsg, $tokenMessage->errorcode);
+                }
 
+                return $tokenMessage;
             }
 
         }
@@ -98,6 +129,13 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
     }
 
     private function fetchUserInfo($openId, $accessToken) {
-        $data = json_decode($this->client->fetchUserInfo($openId, $accessToken));
+
+        $userInfo = json_decode($this->client->fetchUserInfo($openId, $accessToken));
+
+        if (isset($userInfo->errorcode) && isset($userInfo->errmsg) && $userInfo->errorcode && $userInfo->errmsg) {
+            throw new AuthenticationException($userInfo->errmsg, $userInfo->errorcode);
+        }
+
+        return $userInfo;
     }
 }

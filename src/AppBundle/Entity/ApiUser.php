@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Table(name="api_user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ApiUserRepository")
  */
-class ApiUser implements UserInterface
+class ApiUser implements UserInterface, \Serializable
 {
     /**
      * @var int
@@ -144,6 +144,19 @@ class ApiUser implements UserInterface
     public function eraseCredentials()
     {
 
+    }
+
+    public function serialize()
+    {
+        return serialize([
+            $this->username,
+            $this->apiKey
+        ]);
+    }
+
+    public function unserialize($serialized)
+    {
+        list($this->username, $this->apiKey) = unserialize($serialized);
     }
 }
 

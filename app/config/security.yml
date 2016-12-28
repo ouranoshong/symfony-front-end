@@ -28,6 +28,7 @@ security:
             security: false
 
         main:
+            provider: api_provider
             anonymous: ~
             # activate different ways to authenticate
 

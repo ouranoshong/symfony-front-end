@@ -22,11 +22,10 @@ class WXOpenController extends Controller
 
     /**
      * @Route("/login/callback/wxopen", name="login_callback_wxopen")
+     *
      */
     public function loginCallbackAction(Request $request) {
-        var_dump($this->getUser());
-
-        return new Response("<html><body>hello callback!</body></html>");
+        return new Response("<html><body> hello callback!</body></html>");
     }
 
 }

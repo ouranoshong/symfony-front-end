@@ -268,25 +268,31 @@
 
 {% block stylesheets %}
 
-    {% stylesheets
+    {#{% stylesheets#}
 
-        'bundles/app/css/bootstrap.min.css'
-        'bundles/app/css/main.css'
-        filter="cssrewrite"
-    %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
+        {#'bundles/app/css/bootstrap.min.css'#}
+        {#'bundles/app/css/main.css'#}
+        {#filter="cssrewrite"#}
+    {#%}#}
+        {#<link rel="stylesheet" href="{{ asset_url }}" />#}
+    {#{% endstylesheets %}#}
+
+
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/main.css') }}">
 
 {% endblock %}
 
 {% block javascripts %}
 
-    {% javascripts
-        'bundles/app/js/jquery.min.js'
-        'bundles/app/js/bootstrap.min.js'
+    {#{% javascripts#}
+        {#'bundles/app/js/jquery.min.js'#}
+        {#'bundles/app/js/bootstrap.min.js'#}
 
-    %}
-        <script src="{{ asset_url }}" type="text/javascript"></script>
-    {% endjavascripts %}
+    {#%}#}
+        {#<script src="{{ asset_url }}" type="text/javascript"></script>#}
+    {#{% endjavascripts %}#}
 
+    <script type="text/javascript" src="{{ asset('bundles/app/js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/app/js/bootstrap.min.js') }}"></script>
 {% endblock %}
