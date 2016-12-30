@@ -1,0 +1,17 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}AppBundle:Registration:register{% endblock %}
+
+{% block body %}
+<h1>Welcome to the Registration:register page</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.username) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.plainPassword.first) }}
+    {{ form_row(form.plainPassword.second) }}
+
+    <button type="submit">Register!</button>
+    {{ form_end(form) }}
+
+{% endblock %}

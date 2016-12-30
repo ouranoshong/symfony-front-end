@@ -7,19 +7,19 @@ security:
 
     # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
-        in_memory:
-            memory:
-                users:
-                    ryan:
-                        password: $2y$12$aD1gV5gBOxkh82xC81RYLeOyGRP81draurMBEoCouzwo7iErPwVQW
-                        roles: 'ROLE_USER'
-                    admin:
-                        password: $2y$12$XTx4D81Ca3WHxK0Jznsa.OYuYsUbRJnnVrsbiEecSIGTUTlNh3PL2
-                        roles: 'ROLE_ADMIN'
-        api_provider:
-            entity:
-                class: AppBundle:ApiUser
-                property: apiKey
+#        in_memory:
+#            memory:
+#                users:
+#                    ryan:
+#                        password: $2y$12$aD1gV5gBOxkh82xC81RYLeOyGRP81draurMBEoCouzwo7iErPwVQW
+#                        roles: 'ROLE_USER'
+#                    admin:
+#                        password: $2y$12$XTx4D81Ca3WHxK0Jznsa.OYuYsUbRJnnVrsbiEecSIGTUTlNh3PL2
+#                        roles: 'ROLE_ADMIN'
+#        api_provider:
+#            entity:
+#                class: AppBundle:ApiUser
+#                property: apiKey
 
 
         db_provier:
@@ -55,7 +55,7 @@ security:
                 authenticators:
                     - app.security.wxopen_authenticator
 
-            provider: api_provider
+            provider: db_provier
 
 
     access_control:
