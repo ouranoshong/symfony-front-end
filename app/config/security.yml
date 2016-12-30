@@ -2,9 +2,8 @@
 # http://symfony.com/doc/current/security.html
 security:
     encoders:
-        Symfony\Component\Security\Core\User\User:
+        AppBundle\Entity\User:
             algorithm: bcrypt
-            cost: 12
 
     # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
@@ -21,6 +20,13 @@ security:
             entity:
                 class: AppBundle:ApiUser
                 property: apiKey
+
+
+        db_provier:
+            entity:
+                class: AppBundle:User
+                property: username
+
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
@@ -28,7 +34,6 @@ security:
             security: false
 
         main:
-            provider: api_provider
             anonymous: ~
             # activate different ways to authenticate
 
@@ -49,6 +54,9 @@ security:
             guard:
                 authenticators:
                     - app.security.wxopen_authenticator
+
+            provider: api_provider
+
 
     access_control:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
