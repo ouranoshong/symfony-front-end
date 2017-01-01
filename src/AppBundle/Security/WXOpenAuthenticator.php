@@ -10,6 +10,7 @@ namespace AppBundle\Security;
 
 
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\User;
 use AppBundle\ResourceOwner\WXOpenClient;
 use AppBundle\Security\Exception\NoAuthCodeAuthenticationException;
 use Doctrine\ORM\EntityManager;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Router;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
@@ -45,6 +47,7 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
 
     public function __construct(WXOpenClient $client, EntityManager $em, Router $router)
     {
+
         $this->client = $client;
         $this->em = $em;
         $this->router = $router;
@@ -68,25 +71,24 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
 
-        $existingUser = $userProvider->loadUserByUsername($credentials->openid);
+        $existingUser = $this->em->getRepository('AppBundle:User')->findOneByWxOpenId($credentials->openid);
 
         if ($existingUser) {
-            return $existingUser;
+            return $userProvider->loadUserByUsername($existingUser->getUsername());
         }
 
         $userInfo = $this->fetchUserInfo($credentials->openid, $credentials->access_token);
+        $creatingUser = new User();
 
-        $user = new ApiUser();
+        $creatingUser->setWxOpenId($userInfo->openid);
+        $creatingUser->setUsername($this->genUsernameByGender($userInfo->six));
+        $creatingUser->setPassword(current($this->genPassword()));
+        $creatingUser->setIsActive(true);
 
-        $user->setUserId(2);
-        $user->setUsername($userInfo->nickname);
-        $user->setApiKey($userInfo->openid);
-
-        $this->em->persist($user);
+        $this->em->persist($creatingUser);
         $this->em->flush();
 
-        return $user;
-
+        return $userProvider->loadUserByUsername($creatingUser->getUsername());
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -96,7 +98,7 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        return new Response($exception->getMessageKey());
+        return new Response(strval($exception->getMessageKey().$exception->getMessage()));
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
@@ -119,6 +121,10 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
                     throw new AuthenticationException($tokenMessage->errmsg, $tokenMessage->errorcode);
                 }
 
+                if (!isset($tokenMessage->openid)) {
+                    throw new AuthenticationException('System error: No openid');
+                }
+
                 return $tokenMessage;
             }
 
@@ -136,6 +142,34 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
             throw new AuthenticationException($userInfo->errmsg, $userInfo->errorcode);
         }
 
+        if (!isset($userInfo->openid)) {
+            throw new AuthenticationException('System error: No openid');
+        }
+
         return $userInfo;
+    }
+
+    private function genUsernameByGender($gender = null) {
+
+        $numbers = explode(' ', microtime());
+        $numbers[0] = substr($numbers[0], 2, 3);
+        $postfix = join('', array_reverse($numbers));
+
+         switch($gender) {
+             case 1:
+                 return 'wxMan_'.$postfix;
+             case 2:
+                 return 'wxWoman_'.$postfix;
+
+             default:
+                 return 'wxUser_'.$postfix;
+         }
+    }
+
+    private function genPassword() {
+        // 'Wx8Ps*Encoder'
+        return [
+            '$2y$13$NVKHudiPUHRMBidRtaMT2uEw1EKPs9Sp5MMhpd/5KKNV.SXLr0Lt.'
+        ];
     }
 }

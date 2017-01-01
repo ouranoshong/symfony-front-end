@@ -8,7 +8,6 @@
 
 namespace AppBundle\ResourceOwner;
 
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Router;
 
@@ -38,19 +37,13 @@ class WXOpenClient
 
     private $generator;
 
-    /**
-     * WXOpenClient constructor.
-     *
-     *
-     */
-    public function __construct(Container $container, Router $generator) {
 
-        $configs = $container->getParameter('wx_open');
+    public function __construct(array $configs, Router $router) {
 
         $this->appId = $configs['app_id'];
         $this->appSecret = $configs['app_secret'];
 
-        $this->callbackUri = $generator->generate(
+        $this->callbackUri = $router->generate(
 
             $configs['redirect_route'],
             [],

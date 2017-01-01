@@ -2,8 +2,11 @@
 # http://symfony.com/doc/current/security.html
 security:
     encoders:
+        Symfony\Component\Security\Core\User\User:
+            algorithm: bcrypt
         AppBundle\Entity\User:
             algorithm: bcrypt
+
 
     # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
@@ -22,7 +25,7 @@ security:
 #                property: apiKey
 
 
-        db_provier:
+        db_provider:
             entity:
                 class: AppBundle:User
                 property: username
@@ -42,22 +45,21 @@ security:
 
             # form_login: ~
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+            provider: db_provider
 
             form_login:
                 login_path: login
                 check_path: login
 
-            logout:
-                path:   /logout
-                target: /
-
             guard:
                 authenticators:
                     - app.security.wxopen_authenticator
 
-            provider: db_provier
-
+            logout:
+                path:   /logout
+                target: /
 
     access_control:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, roles: ROLE_ADMIN }

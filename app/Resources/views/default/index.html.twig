@@ -58,7 +58,7 @@
             <fieldset>
 
                 <!-- Form Name -->
-                <legend>Contact Us Today!</legend>
+                <legend>Contact Us Today! {% if user %}<h2>hello {{ user.username }}</h2>{% endif %}</legend>
 
                 <!-- Text input-->
 

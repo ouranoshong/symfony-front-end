@@ -4,6 +4,3 @@ app:
 
 logout:
     path: /logout
-
-login_callback_wxopen:
-    path: /login/callback/wxopen

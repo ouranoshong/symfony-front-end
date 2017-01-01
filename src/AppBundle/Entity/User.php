@@ -52,7 +52,7 @@ class User implements UserInterface, \Serializable
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=60, unique=true)
+     * @ORM\Column(name="email", type="string", length=60, unique=true, nullable=true)
      * @Assert\NotBlank()
      * @Assert\Email()
      */
@@ -64,6 +64,17 @@ class User implements UserInterface, \Serializable
      * @ORM\Column(name="isActive", type="boolean")
      */
     private $isActive;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="wxOpenId", type="string", length=100, unique=true, nullable=true)
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     */
+    private $wxOpenId;
+
 
 
     public function __construct()
@@ -219,7 +230,7 @@ class User implements UserInterface, \Serializable
 
     public function getRoles()
     {
-        return ['ROLE_USER'];
+        return ['ROLE_ADMIN'];
     }
 
     public function getSalt()
@@ -230,4 +241,24 @@ class User implements UserInterface, \Serializable
     public function eraseCredentials()
     {
     }
+
+    /**
+     * @return string
+     */
+    public function getWxOpenId()
+    {
+        return $this->wxOpenId;
+    }
+
+    /**
+     * @param string $wxOpenId
+     * @return User
+     */
+    public function setWxOpenId($wxOpenId)
+    {
+        $this->wxOpenId = $wxOpenId;
+        return $this;
+    }
+
+
 }
