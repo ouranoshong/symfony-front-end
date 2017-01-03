@@ -33,8 +33,8 @@ class DefaultController extends Controller
 //        $user = json_encode($this->getUser());
 //        return new Response($user);
 
-        $user = $this->getUser();
-        return $this->render('default/index.html.twig', compact('user'));
+
+        return $this->render('default/index.html.twig');
     }
 
     /**

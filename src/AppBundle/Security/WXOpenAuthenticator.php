@@ -8,8 +8,6 @@
 
 namespace AppBundle\Security;
 
-
-use AppBundle\Entity\ApiUser;
 use AppBundle\Entity\User;
 use AppBundle\ResourceOwner\WXOpenClient;
 use AppBundle\Security\Exception\NoAuthCodeAuthenticationException;
@@ -18,8 +16,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Router;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -47,8 +43,7 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
 
     public function __construct(WXOpenClient $client, EntityManager $em, Router $router)
     {
-
-        $this->client = $client;
+        $this->client = $client->setCallbackUri($router);
         $this->em = $em;
         $this->router = $router;
     }
@@ -64,6 +59,8 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
             // don't auth
             return;
         }
+
+        var_dump($this->client);exit;
 
         return $this->fetchAccessToken($request);
     }

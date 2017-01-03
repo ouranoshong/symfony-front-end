@@ -36,6 +36,13 @@ class User implements UserInterface, \Serializable
 
     /**
      * @var string
+     * @ORM\Column(name="nickname", type="string", length=100, nullable=true)
+     *
+     */
+    private $nickname;
+
+    /**
+     * @var string
      *
      * @ORM\Column(name="password", type="string", length=64)
      */
@@ -48,6 +55,15 @@ class User implements UserInterface, \Serializable
      * @Assert\Length(max=4096)
      */
     private $plainPassword;
+
+
+    /**
+     * @var string
+     *
+     * @Assert\NotBlank()
+     * @ORM\Column(name="roles", type="string", length=100, nullable=true)
+     */
+    private $roles;
 
     /**
      * @var string
@@ -212,6 +228,8 @@ class User implements UserInterface, \Serializable
             $this->id,
             $this->username,
             $this->password,
+            $this->roles,
+            $this->nickname
             // see section on salt below
             // $this->salt,
         ));
@@ -223,6 +241,8 @@ class User implements UserInterface, \Serializable
             $this->id,
             $this->username,
             $this->password,
+            $this->roles,
+            $this->nickname
             // see section on salt below
             // $this->salt
             ) = unserialize($serialized);
@@ -230,7 +250,14 @@ class User implements UserInterface, \Serializable
 
     public function getRoles()
     {
-        return ['ROLE_ADMIN'];
+        return explode(',', $this->roles);
+    }
+
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 
     public function getSalt()
@@ -259,6 +286,25 @@ class User implements UserInterface, \Serializable
         $this->wxOpenId = $wxOpenId;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getNickname()
+    {
+        return $this->nickname;
+    }
+
+    /**
+     * @param string $nickname
+     * @return User
+     */
+    public function setNickname($nickname)
+    {
+        $this->nickname = $nickname;
+        return $this;
+    }
+
 
 
 }

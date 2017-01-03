@@ -12,8 +12,9 @@ services:
 
     app.resource_owner.wxopen_client:
         class: AppBundle\ResourceOwner\WXOpenClient
-        arguments: ["%wx_open%", "@router"]
+        arguments: ["%wx_open%"]
 
     app.security.wxopen_authenticator:
         class: AppBundle\Security\WXOpenAuthenticator
         autowire: true
+#        arguments: ["@app.resource_owner.wxopen_client", "@doctrine.orm.entity_manager", "@router"]

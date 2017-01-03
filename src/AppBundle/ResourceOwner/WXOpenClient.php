@@ -38,19 +38,27 @@ class WXOpenClient
     private $generator;
 
 
-    public function __construct(array $configs, Router $router) {
+    public function __construct(array $configs) {
 
         $this->appId = $configs['app_id'];
         $this->appSecret = $configs['app_secret'];
+        $this->callbackRoute = $configs['redirect_route'];
+    }
+
+//    public function setRouter(Router $router) {
+//          $this->router
+//    }
+
+    public function setCallbackUri(Router $router) {
 
         $this->callbackUri = $router->generate(
-
-            $configs['redirect_route'],
+            $this->callbackRoute,
             [],
             UrlGeneratorInterface::ABSOLUTE_URL
 
         );
 
+        return $this;
     }
 
     /**
