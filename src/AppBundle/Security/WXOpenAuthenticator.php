@@ -43,7 +43,7 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
 
     public function __construct(WXOpenClient $client, EntityManager $em, Router $router)
     {
-        $this->client = $client->setCallbackUri($router);
+        $this->client = $client;
         $this->em = $em;
         $this->router = $router;
     }
