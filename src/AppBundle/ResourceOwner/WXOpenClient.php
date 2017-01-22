@@ -33,11 +33,17 @@ class WXOpenClient
      */
     public $callbackUri = '';
 
+    /**
+     * @var mixed
+     */
     private $callbackRoute;
 
-    private $generator;
 
-
+    /**
+     * WXOpenClient constructor.
+     *
+     * @param array $configs
+     */
     public function __construct(array $configs) {
 
         $this->appId = $configs['app_id'];
@@ -45,10 +51,11 @@ class WXOpenClient
         $this->callbackRoute = $configs['redirect_route'];
     }
 
-//    public function setRouter(Router $router) {
-//          $this->router
-//    }
-
+    /**
+     * @param \Symfony\Component\Routing\Router $router
+     *
+     * @return $this
+     */
     public function setCallbackUri(Router $router) {
 
         $this->callbackUri = $router->generate(

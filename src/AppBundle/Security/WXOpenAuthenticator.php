@@ -60,8 +60,6 @@ class WXOpenAuthenticator extends AbstractGuardAuthenticator
             return;
         }
 
-        var_dump($this->client);exit;
-
         return $this->fetchAccessToken($request);
     }
 
